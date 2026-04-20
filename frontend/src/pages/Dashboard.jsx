@@ -11,7 +11,7 @@ export default function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [showEditorModal, setShowEditorModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false); // <-- NEW STATE
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [appState, setAppState] = useState('hero');
   const [genStatus, setGenStatus] = useState('idle');
 
@@ -74,23 +74,28 @@ export default function Dashboard() {
         setTimeout(() => setAppState('success'), 1500);
       }, 1000);
     } catch (err) {
-      // --- CATCH LIMIT ERRORS ---
-      if (
-        err.response?.status === 403 &&
-        err.response?.data?.error === 'LIMIT_REACHED'
-      ) {
-        setShowUpgradeModal(true); // Open upgrade popup automatically
+      if (err.response?.status === 403) {
+        setShowUpgradeModal(true);
       } else {
-        alert('Error generating extension. Please try again.');
+        alert('Error: ' + (err.response?.data?.error || err.message));
       }
       setAppState('hero');
+      setGenStatus('idle');
     }
+  };
+
+  const handleHomeClick = () => {
+    setAppState('hero');
+    setGenStatus('idle');
   };
 
   return (
     <div className="flex flex-col h-screen w-screen bg-[#0b0f19] overflow-hidden font-sans text-slate-200">
       <header className="h-[70px] px-8 bg-[#0b0f19]/80 backdrop-blur-lg flex justify-between items-center border-b border-slate-800/80 shadow-sm shrink-0 z-20">
-        <div className="text-2xl font-extrabold text-white flex items-center gap-3 tracking-tight">
+        <div
+          onClick={handleHomeClick}
+          className="text-2xl font-extrabold text-white flex items-center gap-3 tracking-tight cursor-pointer hover:opacity-80 transition-opacity"
+        >
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
             ✦
           </div>
@@ -98,7 +103,6 @@ export default function Dashboard() {
         </div>
 
         <div className="flex gap-4 items-center">
-          {/* UPDATED: Upgrade button triggers modal */}
           <button
             onClick={handleUpgradeClick}
             className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl cursor-pointer font-bold text-sm transition-all hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20"
@@ -162,20 +166,70 @@ export default function Dashboard() {
           {appState === 'generating' && <ProgressViewer status={genStatus} />}
 
           {appState === 'success' && (
-            <div className="max-w-2xl text-center animate-pop-in relative z-10">
-              <div className="w-24 h-24 mx-auto mb-8 bg-emerald-500/20 rounded-full flex items-center justify-center text-5xl border border-emerald-500/30">
+            <div className="max-w-2xl w-full text-center animate-pop-in relative z-10 mt-8">
+              <div className="w-20 h-20 mx-auto mb-6 bg-emerald-500/20 rounded-full flex items-center justify-center text-4xl border border-emerald-500/30 shadow-lg shadow-emerald-500/20">
                 🎉
               </div>
-              <h1 className="text-4xl text-white mb-4 font-extrabold tracking-tight">
-                Thank You for Using Extension.io!
+              <h1 className="text-3xl md:text-4xl text-white mb-3 font-extrabold tracking-tight">
+                Ready for Launch!
               </h1>
-              <p className="text-lg text-slate-400 mb-10 leading-relaxed">
-                Your extension is ready! Check your History sidebar. Extract the
-                ZIP and load it into Chrome to test it out.
+              <p className="text-base text-slate-400 mb-8 leading-relaxed">
+                Your extension has been downloaded securely. Follow these quick
+                steps to install it:
               </p>
+
+              <div className="bg-slate-800/40 border border-slate-700/80 rounded-2xl p-6 mb-8 text-left backdrop-blur-md shadow-xl mx-auto max-w-lg">
+                <h3 className="text-white font-bold mb-5 flex items-center gap-2 text-lg">
+                  <span className="text-indigo-400 text-xl">⚙️</span>{' '}
+                  Installation Guide
+                </h3>
+                <ul className="space-y-4 text-slate-300 text-sm font-medium">
+                  <li className="flex gap-3 items-start">
+                    <div className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center flex-shrink-0 text-xs font-bold border border-indigo-500/30">
+                      1
+                    </div>
+                    <span className="mt-0.5">
+                      <strong className="text-white">Extract</strong> the
+                      downloaded ZIP file to a new folder on your computer.
+                    </span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <div className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center flex-shrink-0 text-xs font-bold border border-indigo-500/30">
+                      2
+                    </div>
+                    <span className="mt-0.5">
+                      Open Google Chrome and go to{' '}
+                      <code className="bg-slate-900 px-2 py-1 rounded-md border border-slate-700 text-indigo-300 select-all font-mono text-xs">
+                        chrome://extensions/
+                      </code>
+                    </span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <div className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center flex-shrink-0 text-xs font-bold border border-indigo-500/30">
+                      3
+                    </div>
+                    <span className="mt-0.5">
+                      Turn on{' '}
+                      <strong className="text-white">Developer mode</strong>{' '}
+                      (the toggle switch in the top right corner).
+                    </span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <div className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center flex-shrink-0 text-xs font-bold border border-indigo-500/30">
+                      4
+                    </div>
+                    <span className="mt-0.5">
+                      Click the{' '}
+                      <strong className="text-white">Load unpacked</strong>{' '}
+                      button and select your extracted folder.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
               <button
                 onClick={() => setAppState('hero')}
-                className="px-8 py-4 text-lg bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-500 transition-colors"
+                className="px-8 py-3.5 text-base bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20 hover:-translate-y-0.5"
               >
                 + Create Another Extension
               </button>
@@ -196,7 +250,6 @@ export default function Dashboard() {
           onSubmit={handleGenerate}
         />
       )}
-      {/* NEW UPGRADE MODAL */}
       {showUpgradeModal && (
         <UpgradeModal
           onClose={() => setShowUpgradeModal(false)}
