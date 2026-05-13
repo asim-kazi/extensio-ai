@@ -2,6 +2,7 @@
 
 Extensio.ai is a cutting-edge platform that transforms plain English prompts into fully functional, production-ready Chrome Extensions. Powered by Gemini AI, it writes the code, packages the files into a Manifest V3 compliant ZIP, and delivers it instantly—zero coding required.
 
+
 ## 🚀 Features
 
 - **AI-Powered Generation:** Translates natural language ideas into complete extension code (manifest.json, content.js, popup.html, etc.).
